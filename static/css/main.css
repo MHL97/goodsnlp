@@ -1,0 +1,89 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+.mycontainer {
+	height: auto;
+	background: #F7F7F7;
+}
+
+.info_pannel {
+	margin-top: 10px;
+	height: 450px;
+	width: inherit;
+	/*background: #EEA236;*/
+}
+
+.result_pannel {
+	margin-top: 30px;
+	height: 600px;
+	background: #AFD9EE;
+}
+
+
+.head_pannel{
+	height: 40px;
+	margin-top: 5px;
+	background: crimson;
+	border-radius: 20px;
+}
+.title_txt{
+	margin-top: 5px;
+	font-size: 20px;
+	font: "微软雅黑";
+	color: #FFFFFF;
+	letter-spacing: 2px;
+}
+
+#comm_title{
+	font: "黑体";
+	font-size: 15px;
+}
+
+.info_one{
+	font: "微软雅黑";
+	font-size: 15px;
+	font-weight: 700;
+	padding-top: 10px;
+	margin-bottom: 18px;
+	letter-spacing: 2px;
+}
+
+#comm_price, #comm_pl, #comm_rep{
+	font-size: 15px;
+	letter-spacing: 2px;
+}
+
+.info_two p span{
+	color: #D43F3A;
+	font-size:18px;
+}
+
+.info_box{
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+
+.info_list li{
+	margin-top: 10px;
+}
+
+.info_header{
+	font-size: 15px;
+	letter-spacing: 2px;
+}
+
+.info_result{
+	color: #D43F3A;
+	font-size:18px;
+}
+
+.tab_title{
+	font-size: 15px;
+	letter-spacing: 2px;
+}
+
+.tab-content{
+	padding-top: 30px;
+}

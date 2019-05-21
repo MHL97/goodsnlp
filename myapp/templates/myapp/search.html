@@ -1,0 +1,237 @@
+{% load staticfiles %}
+<html lang="zh">
+	<head>
+		{% load myfilter %}
+		<meta charset="UTF-8">
+		<title>商品搜索</title>
+		<link rel="shortcut icon" type="image/x-icon" href="{% static 'img/logo.png' %}" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+		<script type="text/javascript" src="{% static 'js/jquery-3.3.1.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+		<script type="text/javascript">
+			function verify_empty() {
+				if($('#search_key').val() == '') {
+					$('#search_key').attr('placeholder', '请输入内容后搜索！');
+					return false;
+				}
+				else{
+					$('#search_key').attr('placeholder', '');
+					return true;
+				}
+			}
+
+			function analysis(){
+				var count = $('#count').val();
+				<!--if (count.indexOf('.') > -1)-->
+					<!--count = count.split('.')[0]-->
+					<!--$('#count').value = count-->
+				$("a[name='alybtn']").each(function(){
+				var href = $(this).attr('href');
+				var new_href = href.substring(0, href.indexOf('count')) + 'count='+count
+				$(this).attr('href', new_href)
+				})
+
+			}
+
+		</script>
+		<style type="text/css">
+			.tab-pane {
+				padding-top: 15px;
+			}
+
+
+		</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="row clearfix">
+				<div class="col-md-12 column">
+					<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span></button>
+							<a class="navbar-brand" href="#">
+								<p class="text-info">商品信息智能分析系统</p>
+							</a>
+						</div>
+
+						<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+							<ul class="nav navbar-nav">
+								<li>
+									<a href="../welcome">首页</a>
+								</li>
+							</ul>
+							<form class="navbar-form navbar-left">
+								<div class="form-group">
+									<a class="btn btn-info">待分析的评论数量:</a>
+									<input onblur="analysis()" style="width:80px" type="text" class="form-control" name="count" id="count" value="100" onkeyup="value=value.replace(/[^\d]+/g,'')"/>
+								</div>
+							</form>
+							<ul class="nav navbar-nav navbar-right" style="padding-right: 20px;">
+
+								<form class="navbar-form navbar-left" method="post" action="{% url 'myapp:search'%}" onsubmit="return verify_empty()">
+									{% csrf_token %}
+									<div class="form-group">
+
+										<input type="text" class="form-control"  name="search_key" id="search_key" placeholder="" autocomplete="off"/>
+									</div>
+									<button type="submit" class="btn btn-success">搜索</button>
+								</form>
+
+							</ul>
+						</div>
+
+					</nav>
+				</div>
+			</div>
+
+			<div class="row clearfix" style="padding-top: 50px;">
+				<div class="col-md-12 column">
+					<h3 class="text-center">
+				多平台商品搜索部分结果
+			</h3>
+				</div>
+			</div>
+			<div class="row clearfix">
+				<div class="col-md-12 column">
+					<div class="tabbable" id="tabs-203735">
+						<ul class="nav nav-tabs">
+							<li class="active">
+								<a href="#jd_panel" data-toggle="tab">京东商城</a>
+							</li>
+							<li>
+								<!--<a href="#tm_panel" data-toggle="tab">天猫商城</a>-->
+							</li>
+							<li>
+								<a href="#sn_panel" data-toggle="tab">苏宁易购</a>
+							</li>
+							<li>
+								<a href="#vip_panel" data-toggle="tab">唯品会</a>
+							</li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane active" id="jd_panel">
+								<p><a href="{{ jd_url }}" target="_blank">前往搜索主页</a></p>
+								<div class="row">
+									{% for item in jd_list %}
+										{%if item|key:'img'|length > 1%}
+											<div class="col-md-3">
+												<div class="thumbnail good_th">
+													<img alt="{{item|key:'img'}}" src="{{item|key:'img'}}" />
+													<div class="caption" style="height:100px">
+														<p class="text-center text-info"><strong>
+															{% if item|key:'title'|length > 20 %}
+																{{item|key:'title'|slice:'15'}}
+															{% else %}
+																{{item|key:'title'}}
+															{%endif%}
+														</strong></p>
+														<p class="text-center">
+															<a class="btn btn-primary" href="../analysis?purl={{item|key:'href'}}&count=" name="alybtn">分析</a>
+															<a class="btn" href="{{item|key:'href'}}" target="_blank">官网详情</a>
+														</p>
+													</div>
+												</div>
+											</div>
+										{%endif%}
+									{% endfor %}
+								</div>
+							</div>
+							<!--<div class="tab-pane" id="tm_panel">-->
+								<!--<div class="row">-->
+									<!--<p><a href="{{ tm_url }}" target="_blank">前往搜索主页</a></p>-->
+								<!--<div class="row">-->
+									<!--{% for item in tm_list %}-->
+									<!--{%if item|key:'img'|length > 1%}-->
+											<!--<div class="col-md-3">-->
+												<!--<div class="thumbnail good_th">-->
+													<!--<img style="width:250px;height:300px" alt="{{item|key:'img'}}" src="{{item|key:'img'}}" />-->
+													<!--<div class="caption" style="height:100px">-->
+														<!--<p class="text-center text-info"><strong>-->
+															<!--{% if item|key:'title'|length > 20 %}-->
+																<!--{{item|key:'title'|slice:'15'}}-->
+															<!--{% else %}-->
+																<!--{{item|key:'title'}}-->
+															<!--{%endif%}-->
+														<!--</strong></p>-->
+														<!--<p class="text-center">-->
+															<!--<a class="btn btn-primary" href="../analysis?purl={{item|key:'href'}}&count=" name="alybtn">分析</a>-->
+															<!--<a class="btn" href="{{item|key:'href'}}" target="_blank">官网详情</a>-->
+														<!--</p>-->
+													<!--</div>-->
+												<!--</div>-->
+											<!--</div>-->
+										<!--{%endif%}-->
+									<!--{% endfor %}-->
+								<!--</div>-->
+								<!--</div>-->
+							<!--</div>-->
+							<div class="tab-pane" id="sn_panel">
+								<div class="row">
+									<p><a href="{{ sn_url }}" target="_blank">前往搜索主页</a></p>
+								<div class="row">
+									{% for item in sn_list %}
+									{%if item|key:'img'|length > 1%}
+											<div class="col-md-3">
+												<div class="thumbnail good_th">
+													<img style="width:250px;height:300px" alt="{{item|key:'img'}}" src="{{item|key:'img'}}" />
+													<div class="caption" style="height:100px">
+														<p class="text-center text-info"><strong>
+															{% if item|key:'title'|length > 20 %}
+																{{item|key:'title'|slice:'15'}}
+															{% else %}
+																{{item|key:'title'}}
+															{%endif%}
+														</strong></p>
+														<p class="text-center">
+															<a class="btn btn-primary" href="../analysis?purl={{item|key:'href'}}&count=" name="alybtn">分析</a>
+															<a class="btn" href="{{item|key:'href'}}" target="_blank">官网详情</a>
+														</p>
+													</div>
+												</div>
+											</div>
+										{%endif%}
+									{% endfor %}
+								</div>
+								</div>
+							</div>
+							<div class="tab-pane" id="vip_panel">
+								<div class="row">
+									<p><a href="{{ vip_url }}" target="_blank">前往搜索主页</a></p>
+								<div class="row">
+									{% for item in vip_list %}
+									{%if item|key:'img'|length > 1%}
+											<div class="col-md-3">
+												<div class="thumbnail good_th">
+													<img style="width:250px;height:300px" alt="{{item|key:'img'}}" src="{{item|key:'img'}}"/>
+													<div class="caption" style="height:100px">
+														<p class="text-center text-info"><strong>
+															{% if item|key:'title'|length > 20 %}
+																{{item|key:'title'|slice:'15'}}
+															{% else %}
+																{{item|key:'title'}}
+															{%endif%}
+														</strong></p>
+														<p class="text-center">
+															<a class="btn btn-primary" href="../analysis?purl={{item|key:'href'}}&count=" name="alybtn">分析</a>
+															<a class="btn" href="{{item|key:'href'}}" target="_blank">官网详情</a>
+														</p>
+													</div>
+												</div>
+											</div>
+										{%endif%}
+									{% endfor %}
+								</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</body>
+
+</html>

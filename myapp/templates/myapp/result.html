@@ -1,0 +1,341 @@
+{% load staticfiles %}
+<html lang="zh">
+	<head>
+		{% load myfilter %}
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+		<title>商品信息智能分析系统</title>
+		<link rel="shortcut icon" type="image/x-icon" href="{% static 'img/logo.png' %}" />
+		<link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}" />
+		<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}" />
+		<script>
+			function analysis(){
+				var count = $('#count').val();
+				<!--if (count.indexOf('.') > -1)-->
+					<!--count = count.split('.')[0]-->
+					<!--$('#count').value = count-->
+				$("a[name='alybtn']").each(function(){
+				var href = $(this).attr('href');
+				var new_href = href.substring(0, href.indexOf('count')) + 'count='+count
+				$(this).attr('href', new_href)
+				})
+
+			}
+		</script>
+	</head>
+
+	<body>
+		<div class="container mycontainer">
+			<div class="row clearfix head_pannel">
+				<div class="col-md-12 column">
+					<h3 class="text-center title_txt">
+						商品信息和分析结果
+					</h3>
+				</div>
+
+			</div>
+
+			<div class="row clearfix info_box">
+				<div class="col-md-4 column">
+					<div class="thumbnail good_th">
+						<a href="{{spider_result|key:'product_url'}}" target="_blank">
+						<img class="img-thumbnail" alt="商品图片加载失败" src="{{spider_result|key:'img_url'}}"/>
+					</a>
+						<div class="caption" style="height:100px">
+							<p class="text-center text-info"><strong>{{spider_result|key:'product_title'}}</strong></p>
+						</div>
+					</div>
+
+				</div>
+				<div class="col-md-8 column">
+					<div class="row">
+						<div class="col-md-5 col-md-offset-1">
+							<ul class="info_list nav nav-list">
+								<li>
+									<span class="info_header">官方评论总数:<span class="info_result">{{spider_result|key:'total_num'}}</span></span>
+								</li>
+								<li>
+									<span class="info_header">官方<strong class="text-success">好评</strong>总数:<span class="info_result">{{spider_result|key:'good_num'}}</span></span>
+								</li>
+								<li>
+									<span class="info_header">官方<strong class="text-primary">中评</strong>总数:<span class="info_result">{{spider_result|key:'mid_num'}}</span></span>
+								</li>
+								<li>
+									<span class="info_header">官方<strong class="text-danger">差评</strong>总数: <span class="info_result">{{spider_result|key:'poor_num'}}</span></span>
+								</li>
+								<li>
+									<span class="info_header">官方<strong class="text-success">好评率</strong>:<span class="info_result">{{spider_result|key:'good_rote'}}</span>%</span>
+								</li>
+							</ul>
+						</div>
+						<div class="col-md-5 ">
+							<ul class="info_list nav nav-list">
+								<li>
+							<span class="info_header">系统分析评论总数:<span class="info_result">{{result|key:'total_num'}}</span></span>
+						</li>
+						<li>
+							<span class="info_header">系统分析<strong class="text-success">好评</strong>总数:<span class="info_result">{{result|key:'good_num'}}</span></span>
+						</li>
+						<li>
+							<span class="info_header">系统分析<strong class="text-primary">中评</strong>总数:<span class="info_result">{{result|key:'mid_num'}}</span></span>
+						</li>
+						<li>
+							<span class="info_header">系统分析<strong class="text-danger">差评</strong>总数: <span class="info_result">{{result|key:'poor_num'}}</span></span>
+						</li>
+						<li>
+							<span class="info_header">系统分析<strong class="text-success">好评率</strong>:<span class="info_result">{{result|key:'good_rote'}}</span>%</span>
+						</li>
+							</ul>
+						</div>
+					</div>
+					<hr style=" border: 0.5px solid black;" />
+					<div class="row">
+						<div class="col-md-5 col-md-offset-1">
+							<p class="text-left text-danger" style="font-size: 15px;letter-spacing: 3px;"><strong>商品部分评论:</strong></p>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-10 col-md-offset-1">
+							<ul class="info_list">
+								{% for item in comment%}
+									{% if item|length > 40 %}
+										<li>{{item|slice:'38'}}</li>
+										{% else %}
+										<li>{{item}}</li>
+										{%endif%}
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="row clearfix">
+				<div class="col-md-12 column ">
+					<div class="tabbable" id="analysis_panel">
+						<ul class="nav nav-tabs">
+							<li>
+								<a href="#panel_sentiment" data-toggle="tab" class="tab_title">评论情感倾向分析结果</a>
+							</li>
+							<li>
+								<a href="#panel_if_tdf" data-toggle="tab" class="tab_title">评论关键字分析结果</a>
+							</li>
+							<li>
+								<a href="#panel_wordcloud" data-toggle="tab" class="tab_title">评论词云图</a>
+							</li>
+							<li>
+								<a href="#panel_recommend" data-toggle="tab" class="tab_title">平台推荐</a>
+							</li>
+							<li>
+								<a href="#panel_analysis" data-toggle="tab" class="tab_title">统计与分析</a>
+							</li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane" id="panel_sentiment">
+								<div class="col-md-6">
+									<div class="thumbnail">
+										<img class="img-thumbnail" alt="情感得分（总）" src="{{result|key:'all_sent_h'}}" />
+										<div class="caption">
+
+											<p class="text-center">情感得分（总）</p>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="thumbnail">
+										<img class="img-thumbnail" alt="情感得分（好评）" src="{{result|key:'good_sent_h'}}"/>
+										<div class="caption">
+											<p class="text-center">情感得分（好评）</p>
+
+										</div>
+									</div>
+								</div>
+
+								<div class="col-md-6">
+									<div class="thumbnail">
+										<img class="img-thumbnail" alt="情感得分（中评）" src="{{result|key:'mid_sent_h'}}"/>
+										<div class="caption">
+											<p class="text-center">情感得分（中评）</p>
+
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="thumbnail">
+										<img class="img-thumbnail" alt="300x200" src="{{result|key:'poor_sent_h'}}" />
+										<div class="caption">
+											<p class="text-center">情感得分（差评）</p>
+
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="tab-pane" id="panel_if_tdf">
+								<div class="col-md-4">
+									<div class="thumbnail">
+										<img class="img-thumbnail" alt="前十关键字统计（总）" src="{{result|key:'top_all_freq'}}" />
+										<div class="caption">
+											<p class="text-center">前十关键字统计（总）</p>
+
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="thumbnail">
+										<img class="img-thumbnail" alt="前十关键字统计（好评）" src="{{result|key:'top_good_freq'}}" />
+										<div class="caption">
+											<p class="text-center">前十关键字统计（好评）</p>
+
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="thumbnail">
+										<img class="img-thumbnail" alt="前十关键字统计（差评）" src="{{result|key:'top_poor_freq'}}" />
+										<div class="caption">
+											<p class="text-center">前十关键字统计（差评）</p>
+
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="tab-pane" id="panel_wordcloud">
+								<div class="col-md-4">
+									<div class="thumbnail">
+										<img class="img-thumbnail" alt="词云（总）" src="{{result|key:'all_cloud'}}" />
+										<div class="caption">
+											<h3 class="text-center">词云（总）</h3>
+											<p>
+
+											</p>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="thumbnail">
+										<img class="img-thumbnail" alt="词云（好评）" src="{{result|key:'good_cloud'}}" />
+										<div class="caption">
+											<h3 class="text-center">词云（好评）</h3>
+											<p>
+
+											</p>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-4">
+									<div class="thumbnail">
+										<img class="img-thumbnail" alt="无差评，该词云未生成" src="{{result|key:'poor_cloud'}}" />
+										<div class="caption">
+											<h3 class="text-center">词云（差评）</h3>
+											<p>
+
+											</p>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<div class="tab-pane" id="panel_recommend">
+								<div class="row">
+									<form class="navbar-form navbar-left">
+										<div class="form-group">
+											<a class="btn btn-info">待分析的评论数量:</a>
+											<input onblur="analysis()" style="width:80px" type="text" class="form-control" name="count" id="count" value="100" onkeyup="value=value.replace(/[^\d]+/g,'')" />
+										</div>
+									</form>
+								</div>
+								<div class="row">
+									{% for item in recommend %}
+									{%if item|key:'img_url'|length > 1%}
+										<div class="col-md-3">
+										<div class="thumbnail good_th">
+											<img alt="图片加载失败！" src="{{item|key:'img_url'}}" />
+											<div class="caption" style="height:110px">
+												<p class="text-center text-info"><strong>
+													{% if item|key:'product_title'|length > 20 %}
+														{{item|key:'product_title'|slice:'15'}}
+													{% else %}
+														{{item|key:'product_title'}}
+													{%endif%}
+												</strong>
+												</p>
+												<p class="text-center">
+													评论总数:<strong class="text-danger">{{item|key:'total_num'}}</strong>
+													&nbsp;|&nbsp;
+													好评率:<strong class="text-success">{{item|key:'good_rote'}}%</strong>
+												</p>
+												<p class="text-center">
+													<a class="btn btn-primary" href="../analysis?purl={{item|key:'product_url'}}&count=" name="alybtn">分析</a>
+													<a class="btn" href="{{item|key:'product_url'}}" target="_blank">官网详情</a>
+												</p>
+											</div>
+										</div>
+									</div>
+									{%endif%}
+								{% endfor %}
+								</div>
+							</div>
+
+							<div class="tab-pane" id="panel_analysis">
+								<div class="row">
+									<div class="col-md-4">
+										<div class="thumbnail good_th">
+											<img alt="" src="{{visual_result|key:'all_avg_path'}}" />
+											<div class="caption" style="height:50px">
+												<p class="text-center text-info">
+													平均情感得分
+												</p>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="thumbnail good_th">
+											<img alt="" src="{{visual_result|key:'jd_avg_path'}}" />
+											<div class="caption" style="height:50px">
+												<p class="text-center text-info">
+													京东-商品种类对比
+												</p>
+
+											</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="thumbnail good_th">
+											<img alt="" src="{{visual_result|key:'vip_avg_path'}}" />
+											<div class="caption" style="height:50px">
+												<p class="text-center text-info">
+													唯品会-商品种类对比
+												</p>
+
+											</div>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="thumbnail good_th">
+											<img alt="" src="{{visual_result|key:'sn_avg_path'}}" />
+											<div class="caption" style="height:50px">
+												<p class="text-center text-info">
+													苏宁易购-商品种类对比
+												</p>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script src="{% static 'js/jquery-3.3.1.js' %}" type="text/javascript" charset="utf-8"></script>
+		<script src="{% static 'js/bootstrap.min.js' %}" type="text/javascript" charset="utf-8"></script>
+
+	</body>
+
+</html>
